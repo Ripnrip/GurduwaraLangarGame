@@ -3,8 +3,12 @@ import GurdwaraLangarGame from '@/components/GurduwaraLangarGame';
 export default function Home() {
   return (
     <div>
-      <h1>Gurdwara Langar Seva Game</h1>
-      <GurdwaraLangarGame />
+      <header>
+        <h3>Emotional Health & Spirituality in Sikhism </h3>
+      </header>
+      <main>
+        <GurdwaraLangarGame />
+      </main>
     </div>
   );
 }

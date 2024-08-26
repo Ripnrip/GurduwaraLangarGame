@@ -10,18 +10,6 @@ import { initializeApp } from 'firebase/app';
 import { getAuth, signInAnonymously, onAuthStateChanged, updateProfile } from 'firebase/auth';
 import { getDatabase, ref, set, onValue, push, remove, get, update, serverTimestamp } from 'firebase/database';
 
-// // Firebase configuration
-// const firebaseConfig = {
-//   // Your Firebase configuration here
-//   apiKey: "YOUR_API_KEY",
-//   authDomain: "YOUR_AUTH_DOMAIN",
-//   databaseURL: "YOUR_DATABASE_URL",
-//   projectId: "YOUR_PROJECT_ID",
-//   storageBucket: "YOUR_STORAGE_BUCKET",
-//   messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-//   appId: "YOUR_APP_ID"
-// };
-
 const firebaseConfig = {
     apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
     authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
@@ -108,17 +96,42 @@ const GurdwaraLangarGame = () => {
       const usersRef = ref(database, 'users');
       const unsubscribe = onValue(usersRef, (snapshot) => {
         const data = snapshot.val();
-        setUsers(data || {});
-        const total = Object.values(data || {}).reduce((sum, user) => sum + user.sevaPoints, 0);
+        const total = Object.values(data || {}).reduce((sum, user) => {
+          return user.sevaPoints > 0 ? sum + user.sevaPoints : sum;
+        }, 0);
         setTotalSevaPoints(total);
       });
   
       return () => {
-        unsubscribe(); // Unsubscribe from the listeners when component unmounts
-        // We're not removing the user data anymore
+        unsubscribe(); // Unsubscribe from the listeners when the component unmounts
       };
     }
   }, [userId, displayName]);
+  
+  //userCount
+  
+  useEffect(() => {
+    const usersRef = ref(database, 'users');
+    
+    const unsubscribe = onValue(usersRef, (snapshot) => {
+      const data = snapshot.val();
+
+      // Filter users who have a displayName
+      const filteredUsers = Object.entries(data || {})
+        .filter(([uid, userData]) => userData.displayName && userData.displayName.trim() !== '')
+        .reduce((obj, [uid, userData]) => {
+          obj[uid] = userData;
+          return obj;
+        }, {});
+
+      setUsers(filteredUsers); // Update the users state with the filtered data
+    });
+
+    return () => {
+      unsubscribe(); // Clean up the listener when the component unmounts
+    };
+  }, [database]);
+
 
   const handleDisplayNameUpdate = () => {
     if (userId, displayName) {
@@ -328,6 +341,11 @@ const GurdwaraLangarGame = () => {
     });
   };
 
+  const handleGridClick = (x, y) => {
+    setPlayerPosition({ x, y });
+    serveFood({ x, y });
+  };
+
   const serveFood = () => {
     const personServed = seatedPeople.find(
       (person) => person.x === playerPosition.x && person.y === playerPosition.y
@@ -368,10 +386,6 @@ const GurdwaraLangarGame = () => {
     return null;
   };
 
-//   const updateUserScore = (points) => {
-//     const userRef = ref(database, `users/${userId}`);
-//     set(userRef, { displayName, sevaPoints: sevaPoints + points });
-//   };
 
 const renderGrid = () => {
     let grid = [];
@@ -392,7 +406,12 @@ const renderGrid = () => {
         }
   
         grid.push(
-          <div key={`${x}-${y}`} className="relative w-16 h-16 border flex items-center justify-center text-2xl">
+          <div 
+          key={`${x}-${y}`}
+          className="relative w-16 h-16 border flex items-center justify-center text-2xl"
+          onClick={() => handleGridClick(x, y)}
+          style={{ cursor: 'pointer' }}
+          >
             {content}
             {emoji && <div className="emoji-animation">{emoji}</div>}
           </div>

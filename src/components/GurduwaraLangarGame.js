@@ -1,11 +1,14 @@
+'use client';
+
+import '../app/globals.css';
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Progress } from '@/components/ui/progress';
 import { Input } from '@/components/ui/input';
 import { initializeApp } from 'firebase/app';
-import { getAuth, signInAnonymously, onAuthStateChanged } from 'firebase/auth';
-import { getDatabase, ref, set, onValue, push, remove } from 'firebase/database';
+import { getAuth, signInAnonymously, onAuthStateChanged, updateProfile } from 'firebase/auth';
+import { getDatabase, ref, set, onValue, push, remove, get, update, serverTimestamp } from 'firebase/database';
 
 // // Firebase configuration
 // const firebaseConfig = {
@@ -36,7 +39,7 @@ const database = getDatabase(app);
 
 const GRID_SIZE = 3;
 const GAME_DURATION = 60; // seconds
-const MAX_SEATED_PEOPLE = 7;
+const MAX_SEATED_PEOPLE = 3;
 
 const preparationSteps = [
   { id: 'washHands', label: 'Wash hands 🧼' },
@@ -68,42 +71,201 @@ const GurdwaraLangarGame = () => {
   const [timeLeft, setTimeLeft] = useState(GAME_DURATION);
   const [users, setUsers] = useState({});
   const [totalSevaPoints, setTotalSevaPoints] = useState(0);
+  const [lastServedPosition, setLastServedPosition] = useState(null);
+
 
   const allStepsCompleted = Object.values(completedSteps).length === preparationSteps.length;
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
-        setUserId(user.uid);
+        const userID = user.uid;  // Corrected to use user.uid
+        //const userDisplayName = "Enter Name Here";
+        setUserId(userID);
         setGameState('setDisplayName');
       } else {
-        signInAnonymously(auth).catch((error) => {
-          console.error("Error during anonymous sign in:", error);
-        });
+        signInAnonymously(auth)
+          .then((userCredential) => {
+            const userID = userCredential.user.uid;  // Corrected to use userCredential.user.uid
+            //const userDisplayName = userCredential.user.displayName;
+            setUserId(userID);
+            //setDisplayName(userDisplayName);
+            setGameState('setDisplayName');
+            createUser(userID);
+          })
+          .catch((error) => {
+            console.error("Error during anonymous sign in:", error);
+          });
       }
     });
-
+  
     return () => unsubscribe();
   }, []);
+  
 
   useEffect(() => {
     if (userId && displayName) {
-      const userRef = ref(database, `users/${userId}`);
-      set(userRef, { displayName, sevaPoints: 0 });
-
       const usersRef = ref(database, 'users');
-      onValue(usersRef, (snapshot) => {
+      const unsubscribe = onValue(usersRef, (snapshot) => {
         const data = snapshot.val();
         setUsers(data || {});
         const total = Object.values(data || {}).reduce((sum, user) => sum + user.sevaPoints, 0);
         setTotalSevaPoints(total);
       });
-
+  
       return () => {
-        remove(userRef);
+        unsubscribe(); // Unsubscribe from the listeners when component unmounts
+        // We're not removing the user data anymore
       };
     }
   }, [userId, displayName]);
+
+  const handleDisplayNameUpdate = () => {
+    if (userId, displayName) {
+      updateUserDisplayName(userId, displayName);
+      setGameState('entrance'); // Move to the next step after updating the display name
+    }
+  };
+
+  const updateUserDisplayName = (userId, displayName) => {
+    const userRef = ref(database, `users/${userId}`);
+    get(userRef).then((snapshot) => {
+      if (!snapshot.exists()) {
+        set(userRef, { 
+          displayName: displayName, 
+          sevaPoints: 0,
+          isAnonymous: true,
+          lastActive: serverTimestamp()
+        });
+      } else {
+        update(userRef, { 
+          displayName: displayName,
+          lastActive: serverTimestamp()
+        });
+      }
+    });
+  };
+
+  const createUser = (userId) => {
+    const userRef = ref(database, `users/${userId}`);
+    get(userRef).then((snapshot) => {
+      if (!snapshot.exists()) {
+        set(userRef, { 
+          displayName: "displayName", 
+          sevaPoints: 0,
+          isAnonymous: true,
+          itemsServed: {
+            Roti: 0,
+            Chai: 0,
+            Chickpeas: 0,
+            Water: 0,
+            Napkins: 0
+          },
+          lastActive: serverTimestamp()
+        });
+      } else {
+        update(userRef, { 
+          displayName: "displayName",
+          lastActive: serverTimestamp()
+        });
+      }
+    });
+  };
+
+  const cleanupInactiveUsers = () => {
+    const usersRef = ref(database, 'users');
+    get(usersRef).then((snapshot) => {
+      if (snapshot.exists()) {
+        const users = snapshot.val();
+        const currentTime = new Date().getTime();
+        Object.entries(users).forEach(([uid, userData]) => {
+          if (userData.isAnonymous && userData.lastActive) {
+            const lastActiveTime = new Date(userData.lastActive).getTime();
+            if (currentTime - lastActiveTime > 24 * 60 * 60 * 1000) { // 24 hours
+              remove(ref(database, `users/${userId}`));  // Corrected to use uid
+            }
+          }
+        });
+      }
+    });
+  };
+  
+  useEffect(() => {
+    if (userId) {
+      const updateLastActive = setInterval(() => {
+        update(ref(database, `users/${userId}`), {  // Corrected to use userId
+          lastActive: serverTimestamp(),
+        });
+      }, 5 * 60 * 1000); // every 5 minutes
+  
+      return () => clearInterval(updateLastActive);
+    }
+  }, [userId]);
+
+  useEffect(() => {
+    if (userId) {
+      const updateLastActive = setInterval(() => {
+        update(ref(database, `users/${userId}`), {
+          lastActive: serverTimestamp()
+        });
+      }, 5 * 60 * 1000); // every 5 minutes
+  
+      return () => clearInterval(updateLastActive);
+    }
+  }, [userId]);
+  
+  // Add this function to update user's seva points
+  const updateUserScore = (points, foodName) => {
+    if (userId) {
+      const userRef = ref(database, `users/${userId}`);
+      get(userRef).then((snapshot) => {
+        if (snapshot.exists()) {
+          const currentPoints = snapshot.val().sevaPoints || 0;
+          const currentItemsServed = snapshot.val().itemsServed || {};
+
+          update(userRef, { 
+            sevaPoints: currentPoints + points,
+            itemsServed: {
+              ...currentItemsServed,
+              [foodName]: (currentItemsServed[foodName] || 0) + 1
+            }
+          });
+        }
+      });
+    }
+  };
+
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      switch (event.key) {
+        case 'ArrowUp':
+          movePlayer('up');
+          break;
+        case 'ArrowDown':
+          movePlayer('down');
+          break;
+        case 'ArrowLeft':
+          movePlayer('left');
+          break;
+        case 'ArrowRight':
+          movePlayer('right');
+          break;
+        case ' ':
+          serveFood();
+          break;
+        default:
+          break;
+      }
+    };
+  
+    window.addEventListener('keydown', handleKeyDown);
+  
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [playerPosition, seatedPeople, selectedFood]);
+  
+  
 
   useEffect(() => {
     if (gameState === 'playing') {
@@ -122,7 +284,7 @@ const GurdwaraLangarGame = () => {
         if (Math.random() < 0.4 && seatedPeople.length < MAX_SEATED_PEOPLE) {
           addSeatedPerson();
         }
-      }, 500);
+      }, 1000);
 
       return () => {
         clearInterval(timer);
@@ -170,34 +332,69 @@ const GurdwaraLangarGame = () => {
     const personServed = seatedPeople.find(
       (person) => person.x === playerPosition.x && person.y === playerPosition.y
     );
-    if (personServed) {
+    if (personServed && selectedFood) {
       const points = selectedFood.points;
+      const foodName = selectedFood.name;
       setSevaPoints((prev) => prev + points);
       setSeatedPeople((prev) =>
         prev.filter((person) => person !== personServed)
       );
-      updateUserScore(points);
+      updateUserScore(points, foodName);
+  
+      // Set the last served position for the emoji animation
+      setLastServedPosition({ x: playerPosition.x, y: playerPosition.y });
+  
+      // Remove the animation class after the animation duration
+      setTimeout(() => {
+        setLastServedPosition(null);
+      }, 500); // Match this duration with your CSS animation duration
     }
   };
 
-  const updateUserScore = (points) => {
-    const userRef = ref(database, `users/${userId}`);
-    set(userRef, { displayName, sevaPoints: sevaPoints + points });
+  const renderTally = () => {
+    if (userId && users[userId]) {
+      const itemsServed = users[userId].itemsServed || {};
+      return (
+        <div>
+          <h3>Items Served:</h3>
+          <ul>
+            {Object.entries(itemsServed).map(([item, count]) => (
+              <li key={item}>{item}: {count}</li>
+            ))}
+          </ul>
+        </div>
+      );
+    }
+    return null;
   };
 
-  const renderGrid = () => {
+//   const updateUserScore = (points) => {
+//     const userRef = ref(database, `users/${userId}`);
+//     set(userRef, { displayName, sevaPoints: sevaPoints + points });
+//   };
+
+const renderGrid = () => {
     let grid = [];
     for (let y = 0; y < GRID_SIZE; y++) {
       for (let x = 0; x < GRID_SIZE; x++) {
         let content = '⬜';
+        let emoji = null;
+  
         if (x === playerPosition.x && y === playerPosition.y) {
           content = selectedAvatar;
         } else if (seatedPeople.some(person => person.x === x && person.y === y)) {
           content = '👥';
         }
+  
+        // Show the 🙏 emoji if this spot was just served
+        if (lastServedPosition && lastServedPosition.x === x && lastServedPosition.y === y) {
+          emoji = '🙏';
+        }
+  
         grid.push(
-          <div key={`${x}-${y}`} className="w-16 h-16 border flex items-center justify-center text-2xl">
+          <div key={`${x}-${y}`} className="relative w-16 h-16 border flex items-center justify-center text-2xl">
             {content}
+            {emoji && <div className="emoji-animation">{emoji}</div>}
           </div>
         );
       }
@@ -220,7 +417,7 @@ const GurdwaraLangarGame = () => {
               placeholder="Display Name"
               className="mb-4"
             />
-            <Button onClick={() => setGameState('entrance')} disabled={!displayName}>
+        <Button onClick={handleDisplayNameUpdate} disabled={!displayName}>
               Continue
             </Button>
           </div>
@@ -332,6 +529,7 @@ const GurdwaraLangarGame = () => {
             <h3 className="text-xl font-semibold mb-2">Seva Completed</h3>
             <p>Your final Seva Points: {sevaPoints}</p>
             <p>Total Seva Points: {totalSevaPoints}</p>
+            {renderTally()} {/* Display the tally here */}
             <h4 className="text-lg font-semibold mt-4 mb-2">Leaderboard</h4>
             <ul>
               {sortedUsers.map(([id, user], index) => (

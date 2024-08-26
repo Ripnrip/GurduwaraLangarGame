@@ -67,3 +67,25 @@
     @apply bg-background text-foreground;
   }
 }
+
+@keyframes showEmoji {
+  0% {
+    opacity: 0;
+    transform: scale(0);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.5);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0);
+  }
+}
+
+.emoji-animation {
+  position: absolute;
+  animation: showEmoji 0.5s ease-in-out;
+  font-size: 2rem;
+  pointer-events: none;
+}

@@ -1,11 +1,13 @@
 import GurdwaraLangarGame from '@/components/GurduwaraLangarGame';
+import Head from 'next/head';
 
 export default function Home() {
   return (
     <div>
-      <header>
-        <h3>Emotional Health & Spirituality in Sikhism </h3>
-      </header>
+      <Head>
+      <link rel="icon" href="/favicon.png" />
+      <title>Emotional Health & Spirituality in Sikhism</title>
+      </Head>
       <main>
         <GurdwaraLangarGame />
       </main>

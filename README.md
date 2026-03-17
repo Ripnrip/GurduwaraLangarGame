@@ -1,70 +1,60 @@
-# 🌸 Gurduwara Langar Game
-
 <div align="center">
-  <img src="https://raw.githubusercontent.com/Ripnrip/GurduwaraLangarGame/main/public/projects/project-7.png" width="800" alt="Project Banner" style="border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
-  
-  <h3>Gamified Sikh heritage application for community impact</h3>
 
-  <p align="center">
-    <img src="https://img.shields.io/badge/Status-Active-87CEEB?style=for-the-badge&logoColor=white" alt="Status">
-    <img src="https://img.shields.io/badge/Language-Swift/React/Flutter-FFB6C1?style=for-the-badge&logoColor=white" alt="Tech">
-    <img src="https://img.shields.io/badge/License-MIT-E6E6FA?style=for-the-badge&logoColor=white" alt="License">
-  </p>
+# Gurduwara Langar Game
+
+### Gamified Sikh heritage application for community impact
+
+<br />
+
+[![React Native](https://img.shields.io/badge/React_Native-61DAFB?style=for-the-badge&logo=react&logoColor=white)]()
+[![Education](https://img.shields.io/badge/Education-FF6B35?style=for-the-badge&logoColor=white)]()
+[![Community](https://img.shields.io/badge/Community-E91E63?style=for-the-badge&logoColor=white)]()
+
+
+*An interactive educational application designed to teach Sikh culture and the beautiful tradition of Langar (community kitchen) through gamification. Built as a meaningful community ERG project that b...*
+
 </div>
 
 ---
 
-### 🌿 Overview
+## Overview
 
-[Detailed description of the project, its purpose, and the problem it solves. Use warm, professional language.]
+An interactive educational application designed to teach Sikh culture and the beautiful tradition of Langar (community kitchen) through gamification. Built as a meaningful community ERG project that bridges technology with cultural heritage, making ancient traditions accessible and engaging for younger generations.
 
-### ✨ Key Features
+## Key Features
 
-- 🎨 **Aesthetic Design**: Studio Ghibli inspired visual language and smooth interactions.
-- 🚀 **Performance Focused**: Optimized for speed and responsiveness across all devices.
-- 🧠 **AI Integration**: Powered by advanced LLMs and agentic workflows (if applicable).
-- 📱 **Seamless Experience**: Context-aware UI that adapts to user needs perfectly.
+- **Cultural Storytelling** — Interactive narratives that teach the history and significance of Langar through engaging gameplay mechanics.
 
-### 🛠️ Tech Stack
+- **Mini-Games** — Fun cooking and serving challenges that simulate the Langar experience, teaching teamwork and selfless service.
 
-- **Frontend**: [React / Next.js / SwiftUI / Flutter]
-- **Styling**: [Vanilla CSS / Tailwind / Framer Motion]
-- **Backend/AI**: [Replicate / OpenAI / Cerebras]
-- **Infrastructure**: [Vercel / GitHub Actions]
+- **Educational Content** — Rich multimedia content covering Sikh history, Gurdwara etiquette, and the philosophy of community service.
 
-### 📸 Explore the Journey
+- **Cross-Platform** — React Native app running on both iOS and Android with native performance and beautiful animations.
 
-> ["A heart's a heavy burden." — Sophie, Howl's Moving Castle]
+## Tech Stack
 
-<div align="center">
-  <table>
-    <tr>
-      <td width="50%">
-        <img src="[Link to screenshot 1]" width="100%" alt="Dashboard" style="border-radius: 10px;">
-      </td>
-      <td width="50%">
-        <img src="[Link to screenshot 2]" width="100%" alt="Feature Detail" style="border-radius: 10px;">
-      </td>
-    </tr>
-  </table>
-</div>
+React Native, Gamification, Education
 
-### 🚀 Getting Started
+## Getting Started
 
 ```bash
-# Clone the magic
+# Clone the repository
 git clone https://github.com/Ripnrip/GurduwaraLangarGame.git
-
-# Step into the world
 cd GurduwaraLangarGame
 
-# Bring it to life
-npm install && npm start
+# Install dependencies
+npm install
+
+# Start development
+npm start
 ```
 
 ---
 
 <div align="center">
-  <p>Built with ✨ by <a href="https://guriboycodes.com">Guriboy</a></p>
-  <img src="https://guriboycodes.com/me_ghibli.png" width="100" style="border-radius: 50%;">
+  <br />
+  <p>Built with ✨ by <a href="https://guriboycodes.com"><strong>GuriboyCodes</strong></a></p>
+  <sub>Staff Software Engineer — Mobile & AI</sub>
+  <br /><br />
+  <a href="https://guriboycodes.com">Portfolio</a> · <a href="https://github.com/Ripnrip">GitHub</a> · <a href="https://linkedin.com/in/gurindersingh">LinkedIn</a>
 </div>

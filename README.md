@@ -4,57 +4,32 @@
 
 ### Gamified Sikh heritage application for community impact
 
+<img src="docs/images/gurduwara-langar-ghibli.png" width="800" alt="Gurduwara Langar Game Banner" style="border-radius: 16px;">
+
 <br />
 
-[![React Native](https://img.shields.io/badge/React_Native-61DAFB?style=for-the-badge&logo=react&logoColor=white)]()
-[![Education](https://img.shields.io/badge/Education-FF6B35?style=for-the-badge&logoColor=white)]()
-[![Community](https://img.shields.io/badge/Community-E91E63?style=for-the-badge&logoColor=white)]()
+[![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://reactjs.org/)
+[![License](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](LICENSE)
+[![Portfolio](https://img.shields.io/badge/Portfolio-GuriboyCodes-FFB6C1?style=for-the-badge)](https://guriboycodes.com)
 
 
-*An interactive educational application designed to teach Sikh culture and the beautiful tradition of Langar (community kitchen) through gamification. Built as a meaningful community ERG project that b...*
+[**View Live Demo →**](https://gurduwara-langar-game.vercel.app)
 
 </div>
 
 ---
 
-## Overview
+## 🚀 Overview
 
-An interactive educational application designed to teach Sikh culture and the beautiful tradition of Langar (community kitchen) through gamification. Built as a meaningful community ERG project that bridges technology with cultural heritage, making ancient traditions accessible and engaging for younger generations.
-
-## Key Features
-
-- **Cultural Storytelling** — Interactive narratives that teach the history and significance of Langar through engaging gameplay mechanics.
-
-- **Mini-Games** — Fun cooking and serving challenges that simulate the Langar experience, teaching teamwork and selfless service.
-
-- **Educational Content** — Rich multimedia content covering Sikh history, Gurdwara etiquette, and the philosophy of community service.
-
-- **Cross-Platform** — React Native app running on both iOS and Android with native performance and beautiful animations.
-
-## Tech Stack
-
-React Native, Gamification, Education
-
-## Getting Started
-
-```bash
-# Clone the repository
-git clone https://github.com/Ripnrip/GurduwaraLangarGame.git
-cd GurduwaraLangarGame
-
-# Install dependencies
-npm install
-
-# Start development
-npm start
-```
-
----
+An interactive educational application designed to teach Sikh culture and the beautiful tradition of Langar (community kitchen) through gamification. Built as a community-driven open-source project.
 
 <div align="center">
-  <br />
-  <p>Built with ✨ by <a href="https://guriboycodes.com"><strong>GuriboyCodes</strong></a></p>
-  <sub>Staff Software Engineer — Mobile & AI</sub>
-  <br /><br />
-  <a href="https://guriboycodes.com">Portfolio</a> · <a href="https://github.com/Ripnrip">GitHub</a> · <a href="https://linkedin.com/in/gurindersingh">LinkedIn</a>
+  <img src="docs/images/gurduwara-langar.gif" width="800" alt="Gameplay Demo" style="border-radius: 8px;">
 </div>
+
+## ✨ Features
+
+- **Interactive Gameplay**: Learn the values of Seva (selfless service) through play
+- **Cultural Education**: Authentic representation of Gurduwara traditions
+- **Accessible UI**: Built with React and modern web standards for universal access
